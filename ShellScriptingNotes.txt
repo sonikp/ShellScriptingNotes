@@ -39,8 +39,6 @@ Changing filenames for renaming photo's:
 $ num=1; for i in *; do mv "$i" "$(printf '%04d' $num).DSC.${i#*.}"; ((num++)); done
 $ now=$(date +"%m_%d_%Y"); num=1; for i in *; do mv "$i" "$(printf '%04d' $num)-DSC-${now}-Germany.${i#*.}"; ((num++)); done
 
-
-
 Remove first "3" character from filenames;
 $ for i in *; do echo $i "${i:3}"; done
 $ for i in *; do mv $i "${i:3}"; done
@@ -89,18 +87,12 @@ $ for i in *.mkv; do mv $i $(printf '%s\n' ${i%.mkv}_newstring.mkv); done
 Adding string to end of filename, after extension:
 $ for i in *; do mv $i ${i}-old_version; done
 
-
-
-
-
 Rename all files in a directory to a 4 digit sequential increasing numbers:
 $ num=1; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
 $ count=1; for i in $(ls -v); do mv $i "${count} $i"; ((count++)); done
 
 display all files in a directory starting with c or p;
 $ for i in [cp]*; do echo $i; done
-
-
 
 For loop with two parameters ($1 and $2) in each [list] elements: 
 $ for planet in "Mercury 36" "Venus 67" "Earth 93" "Mars 142"; do set -- $planet; echo "$1 is $2,000,000 miles from the sun" ; done
