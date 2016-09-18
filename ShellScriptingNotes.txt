@@ -1,2 +1,697 @@
 #ShellScriptingNotes
 
+
+===============[Temporary scratch area]=============================
+Renaming picture files from a camera
+
+now=$(date +"%Y%m%d"); for i in {1..6}; do echo "hello x $i" >> NewFiles_${now}_Season_1_Episode_${i}.mkv; done
+
+
+date=$(stat -c %x NewFiles_20160917_Season_1_Episode_1.mkv.mkv | cut -c1-10); for i in *; do mv $i "$i${date}".mkv; done
+
+
+
+
+
+
+
+
+
+
+
+============================[Actual commands]=========================================================
+
+
+Create dummy files in a directory:
+$ for ((i=1; i<=100; i++)); do echo "this system sux $i" >> "NewFiles_Season_1_Episode_$i.mkv"; done
+$ for i in {1..6}; do echo "hello x $i" >> NewFiles_Season_1_Episode_${i}.mkv; done
+
+Create dummy files in a directory with a date stamp:
+$ now=$(date +"%m_%d_%Y"); for i in {1..6}; do echo "hello x $i" >> NewFiles_${now}_Season_1_Episode_${i}.mkv; done
+$ now=$(date +"%Y%m%d"); for i in {1..100}; do echo "hello x $i" >> NewFiles_${now}_Season_1_Episode_${i}.mkv; done
+
+
+Changing previous filename with sequential numbers:
+$ num=1; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+$ num=1; for i in *; do mv "$i" "$(printf '%04d' $num).${i}"; ((num++)); done
+
+Changing filenames for renaming photo's:
+$ num=1; for i in *; do mv "$i" "$(printf '%04d' $num).DSC.${i#*.}"; ((num++)); done
+$ now=$(date +"%m_%d_%Y"); num=1; for i in *; do mv "$i" "$(printf '%04d' $num)-DSC-${now}-Germany.${i#*.}"; ((num++)); done
+
+
+
+Remove first "3" character from filenames;
+$ for i in *; do echo $i "${i:3}"; done
+$ for i in *; do mv $i "${i:3}"; done
+$ for i in $(ls -v); do mv $i "${i:3}"; done
+
+Remove 1st "5" characters from filename:
+$ for i in $(ls -v); do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+$ for i in $(ls -v); do mv $i $(echo $i | sed 's/^.\{5\}//g'); done
+
+Remove 1st "5" characters from filename:
+$ for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c6-`; done
+$ for i in $(ls -v); do mv $i `echo $i | cut -c6-`; done
+
+Using 'sed' to remove the first _ character in a filename:
+$ for i in * ; do echo -e $i \\t $(echo $i |sed 's/_//'); done
+$ for i in * ; do mv $i $(echo $i |sed 's/_//'); done
+
+
+Using 'sed' to remove the first _ and preceding character in a filename:
+$ for i in * ; do echo -e $i \\t $(echo $i |sed 's/._//'); done
+$ for i in * ; do mv $i $(echo $i |sed 's/._//'); done
+
+Using 'sed' to remove the first _ and preceding 2 characters in a filename:
+$ for i in * ; do echo -e $i \\t $(echo $i |sed 's/.._//'); done
+$ for i in * ; do mv $i $(echo $i |sed 's/.._//'); done
+
+Using 'sed' to remove and replace:
+$ for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/_/-/'); done
+$ for i in $(ls -v) ; do mv $i $(echo $i |sed 's/_/-/'); done
+
+Remove and replace the word "Season" with "Series" in a filename:
+$ for i in $(ls -v) ; do mv $i $(echo $i |sed 's/Season/Series/'); done
+
+Remove & replace 'all' (//) characters in a file:
+$ for i in $(ls -v); do echo -e "$i" \\t "${i//_/ }"; done
+$ for i in $(ls -v); do mv "$i" "${i//_/ }"; done
+
+Adding string to beginning of all files:
+$ for i in *; do mv "$i" "prefix_$i"; done;
+$ for file in *; do mv $file new.${file%%}; done
+$ for i in *; do mv "$i" "$(echo $i | sed 's/^/Prepend\ text\ \-\ /')"; done;
+
+Adding string to end of filename, before extension:
+$ for i in *.mkv; do mv $i $(printf '%s\n' ${i%.mkv}_newstring.mkv); done
+
+Adding string to end of filename, after extension:
+$ for i in *; do mv $i ${i}-old_version; done
+
+
+
+
+
+Rename all files in a directory to a 4 digit sequential increasing numbers:
+$ num=1; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+$ count=1; for i in $(ls -v); do mv $i "${count} $i"; ((count++)); done
+
+display all files in a directory starting with c or p;
+$ for i in [cp]*; do echo $i; done
+
+
+
+For loop with two parameters ($1 and $2) in each [list] elements: 
+$ for planet in "Mercury 36" "Venus 67" "Earth 93" "Mars 142"; do set -- $planet; echo "$1 is $2,000,000 miles from the sun" ; done
+
+Operating on a parameterized file list
+set $ filename="*txt"
+$ for i in $filename; do echo "Contents of $i"; echo "---"; cat "$i"; echo; done
+
+
+Other Examples:
+$ for planet in "Mer 36" "Ven 67"; do echo $planet; done
+$ for planet in "Mer 36" "Ven 67"; do set -- $planet; done
+$ for planet in "Mer 36" "Ven 67"; do set -- $planet echo "$1 $200,000 miles from the sun" ; done
+$ for planet in "Mer 36" "Ven 67"; do set -- $planet; echo "$1 $200,000 miles from the sun" ; done; done
+$ for planet in "Mer 36" "Ven 67"; do set -- $planet; echo "$1 $200,000 miles from the sun" ; done
+$ for planet in "Mer 36" "Ven 67" "Ear 93" "Mars 142"; do set -- $planet; echo "$1 $2,000,000 miles from the sun" ; done
+$ for planet in "Mer 36" "Ven 67" "Ear 93" "Mars 142"; do set -- $planet; echo "$1 is $2,000,000 miles from the sun" ; done
+$ for planet in "Mercury 36" "Venus 67" "Earth 93" "Mars 142"; do set -- $planet; echo "$1 is $2,000,000 miles from the sun" ; done
+
+Nested for loops:
+$ for i in {0..3}; do for j in {0..9}; do echo -n \($i, $j\); echo Is today the $i$j \?; done; done
+
+----------------NOT COMPLETE--------------------------------
+***This aims to read the file attributes of a file and appends the file creation date to the end
+of the file. Currently reads the attribute for the first file, assigns the date to the $date variable
+and adds that to the end of the entire file. 
+From:
+NewFiles_20160917_Season_1_Episode_1.mkv
+
+To:
+filename = NewFiles_20160917_Season_1_Episode_1.mkv2016-09-17.mkv
+
+This should needs to read the attribute for each file and then add to the end of the file before the extension. (From above)
+
+Create files in directory:
+$ now=$(date +"%Y%m%d"); for i in {1..6}; do echo "hello x $i" >> NewFiles_${now}_Season_1_Episode_${i}.mkv; done
+
+Reading date attribute of a file and adding it to the end of the file:
+$ date=$(ls -l $file_name | cut -c30-38); for i in *; do mv $i "$i${date}".mkv; done
+$ date=$(stat -c %x NewFiles_20160917_Season_1_Episode_1.mkv | cut -c1-10); for i in *; do mv $i "$i${date}".mkv; done
+
+
+
+----------------------------------------------------------------
+
+
+==========================================================
+
+-----------History File Extracted:-----------------------------------
+
+ 
+ 
+  542  for i in $(ls -v); do echo $i $(i/Episode/Show); done
+  543  for i in $(ls -v); do echo $i ; done
+  544  ls
+  545  ls -l
+  546  for i in *; do echo $i
+  547  for i in *; do echo $i; done
+  548  for i in *; do echo $i ${i..3}; done
+  549  for i in *; do echo $i "${i..3}"; done
+  550  test=123456
+  551  echo $(test..3}
+  552  for i in *; do echo $i "${i:3}"; done
+  553  for i in *; do mv $i "${i:3}"; done
+  554  for i in *; do echo $i "${i:3}"; done
+  555  for i in $(ls -v); do echo $i "${i:3}"; done
+  556  for i in *; do echo $i "${i:3}"; done
+  557  for i in *; do echo $i ${i:3}; done
+  558  for i in *; do mv $i ${i:3}; done
+  559  for i in *; do echo $i ${i:3}; done
+  560  for i in *; do echo $i $(i/mkv/MKV); done
+  561  for i in *; do echo $i ${i/mkv/MKV}; done
+  562  for i in *; do mv $i ${i/mkv/MKV}; done
+  563  for i in *; do echo "$i" "${i/mkv/MKV}"; done
+  564  for i in *; do mv "$i" "${i/mkv/MKV}"; done
+  565  ls
+  566  for i in *; do mv "$i" "${i/MKV/mkv}"; done
+  567  ls
+  568  for i in *; do mv "$i" "${i:3}"; done
+  569  ls
+  570  ls -v
+  571  history
+  572  echo 'pid: 1234'| sed -r 's/^.{5}//'
+  573  for i in *; do echo "$i" | sed -r 's/^.{5}//'; done
+  574  for i in $(ls -v); do echo "$i" | sed -r 's/^.{5}//'; done
+  575  history | more
+  576  for i in $(ls -v); do mv $i "${count} $i"; ((count++)); done
+  577  for i in $(ls -v); do echo $i "${count} $i"; ((count++)); done
+  578  init 0
+  579  cd Java/shell/shell/
+  580  for i in {1..6}; do echo "hello $i" >> NewFile_$i.txt; done 
+  581  ls
+  582  for i in {1..6}; do echo "hello $i" >> NewFile_$i.txt; done 
+  583  ls
+  584  ls -l
+  585  mr File_.txt 
+  586  ls -l
+  587  rm File_.txt
+  588  ls
+  589  ls -v
+  590  ls -l
+  591  ls
+  592  for i in {1..6}; do echo "hello $i" >> aNewFile_$i.txt; done 
+  593  ls
+  594  for i in {1..6}; do echo "hello $i" >> File_$i_name.txt; done 
+  595  ls
+  596  for i in * ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  597  for i in * ; do mv -e $i  $(echo $i |sed 's/^.\{5\}//g'); done
+  598  for i in * ; do mv $i $(echo $i |sed 's/^.\{5\}//g'); done
+  599  ls
+  600  rm -rf *
+  601  for i in {1..10}; do echo "hello $i" >> File_$i_name.txt; done 
+  602  for i in * ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  603  for i in {1..10}; do echo "hello $i" >> File_${i}_name.txt; done 
+  604  ls
+  605  ls -l
+  606  ls -v
+  607  ls -lv
+  608  rm File_.txt 
+  609  for i in $(ls -lv); do echo $i `echo $i | cut -c6-`; done
+  610  for i in $(ls -v); do echo $i `echo $i | cut -c6-`; done
+  611  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c6-`; done
+  612  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c5-`; done
+  613  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c6`; done
+  614  for i in $(ls -v); do echo -e $i \\t `echo $i | cut c6-`; done
+  615  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c6-`; done
+  616  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -6-`; done
+  617  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c6-`; done
+  618  history
+  619  for i in * ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  620  for i in * ; do echo -e $i \\t $(echo $i |sed 's/._/-'); done
+  621  for i in * ; do echo -e $i \\t $(echo $i |sed 's/._//'); done
+  622  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/._//'); done
+  623  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/_//'); done
+  624  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/_/-/'); done
+  625  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/_/ /'); done
+  626  ls
+  627  ls -l
+  628  for i in $(ls -v); do echo -e "$i" \\t "${i//_/ }"; done
+  629  for i in $(ls -v); do echo -e "$i" \\t "${i//_/-}"; done
+  630  for i in $(ls -v); do echo -e "$i" \\t "${i//e/i}"; done
+  631  for i in $(ls -v); do echo -e "$i" \\t "${i//_/ }"; done
+  632  init 0
+  633  ls
+  634  cd Java
+  635  cd shell
+  636  ls
+  637  mkdir shell
+  638  cd shell
+  639  for i in (1..6); do echo $i; done
+  640  for ((i=1; i<=6; i++)); do echo $i; done
+  641  for ((i=1; i<=6; i++)); do echo $ifilename; done
+  642  for ((i=1; i<=6; i++)); do echo $i > filename.txt; done
+  643  ls
+  644  cat filename.txt
+  645  for ((i=1; i<=6; i++)); do echo $i; done
+  646  for ((i=1; i<=6; i++)); do echo $i_; done
+  647  for ((i=1; i<=6; i++)); do echo $(i_filename); done
+  648  for ((i=1; i<=6; i++)); do echo ${i_filename}; done
+  649  rm filename.txt 
+  650  for i in {1..6}; do echo hello > "File_$i_name.txt; done
+  651  for i in {1..6}; do echo hello > "File_$i_name.txt"; done
+  652  ls
+  653  cat File_.txt 
+  654  for i in {1..6}; do echo hello > File_$i_name.txt; done
+  655  ls
+  656  history | more
+  657  for i in {1..6}; do echo "hello" > File_$i_name.txt; done
+  658  ls
+  659  for i in {1..6}; do echo "hello" >> File_$i_name.txt; done
+  660  ls
+  661  for i in {1..6}; do echo "hello" >> File_$i_name.txt; done
+  662  ls
+  663  for i in {1..6}; do echo "hello" >> File_$i_name.txt; done
+  664  ls
+  665  for i in {1..6}; do echo "hello" >>  "File_$i_name.txt"; done
+  666  ls
+  667  for i in {1..6}; do echo hello >>  "File_$i_name.txt"; done
+  668  ls
+  669  rm File_.txt 
+  670  ls
+  671  for i in {1..6}; do echo hello >>  "File_${i}_name.txt"; done
+  672  ls
+  673  cd Java/shell/shell
+  674  for i in * ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  675  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  676  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c6-`; done
+  677  for i in * ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  678  for i in * ; do echo -e $i \\t $(echo $i |sed 's/._/-'); done
+  679  for i in * ; do echo -e $i \\t $(echo $i |sed 's/._//'); done
+  680  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/._//'); done
+  681  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/_/-/'); done
+  682  for i in $(ls -v); do echo -e "$i" \\t "${i//_/ }"; done
+  683  cd Java/shell/shell
+  684  ls
+  685  history
+  686  init 0
+  687  cd Java/shell/shell
+  688  for planet in "Mer 36" "Ven 67"; do echo $planet; done
+  689  for planet in "Mer 36" "Ven 67"; do set -- $planet; done
+  690  for planet in "Mer 36" "Ven 67"; do set -- $planet echo "$1 $200,000 miles from the sun" ; done
+  691  for planet in "Mer 36" "Ven 67"; do set -- $planet; echo "$1 $200,000 miles from the sun" ; done; done
+  692  for planet in "Mer 36" "Ven 67"; do set -- $planet; echo "$1 $200,000 miles from the sun" ; done
+  693  for planet in "Mer 36" "Ven 67" "Ear 93" "Mars 142"; do set -- $planet; echo "$1 $2,000,000 miles from the sun" ; done
+  694  for planet in "Mer 36" "Ven 67" "Ear 93" "Mars 142"; do set -- $planet; echo "$1 is $2,000,000 miles from the sun" ; done
+  695  for planet in "Mercury 36" "Venus 67" "Earth 93" "Mars 142"; do set -- $planet; echo "$1 is $2,000,000 miles from the sun" ; done
+  696  echo $planets
+  697  echo $planet
+  698  FILES=~/
+  699  echo $FILES
+  700  ls $FILES
+  701  for file in $FILES; do echo $FILES; done
+  702  $DIR=~/, ~/fakedir
+  703  $DIR=~/ ~/fakedir
+  704  $DIR="~/, ~/fakedir"
+  705  pwd
+  706  for i in *; do echo $i; done
+  707  for i in $(ls -v); do echo $i; done
+  708  for i in $(ls -v); do echo $i; if [ ! -e "$i" ] the echo "$i" does not exist."; done
+  709  for i in $(ls -v); do echo $i; if [ ! -e "$i" ] the echo "$i does not exist."; done
+  710  filename="*mkv"
+  711  for i in $filename; do echo "contents of $i" echo "---" cat "$i"; done
+  712  ls
+  713  filename="*txt"
+  714  echo $filename
+  715  for i in $filename; do echo "contents of $i" echo "---" cat "$i"; done
+  716  ls -l
+  717  cat File_1_name.txt 
+  718  for i in $filename; do echo "contents of $i" echo "---" cat "$i"; done
+  719  for i in $filename; do echo "contents of $i" echo "---"; cat "$i"; done
+  720  for i in $filename; do echo "contents of $i"; echo "---"; cat "$i"; done
+  721  for i in $filename; do echo "contents of $i"; echo "---"; cat "$i"; echo; done
+  722  for i in $filename; do echo "Contents of $i"; echo "---"; cat "$i"; echo; done
+  723  for i in *; do ls -lv "$file"; done
+  724  echo $file
+  725  for i in *; do ls -lv "$file"; done
+  726  for i in *; do ls -lv "$file"; for file in [EI]*; do echo $file; done
+  727  for i in *; do ls -lv "$file"; for j in [EI]*; do echo $j; done
+  728  for i in *; do ls -lv "$file"; for j in *; do echo $j; done
+  729  for i in *; do ls -lv "$file"; for file in *; do echo $file; done
+  730  for i in *; do ls -lv "$file"; for file in *; do echo $file; done ; done
+  731  for i in *; do ls -lv "$file"; for file in [EI]*; do echo $file; done ; done
+  732  for i in *; do ls -lv "$file"; for file in *; do echo $file; done ; done
+  733  ls
+  734  cat foo >> poo.txt
+  735  echo foo >> cat poo.txt
+  736  ls
+  737  echo foo >> poo.txt
+  738  ls
+  739  for i in [cp]*; do echo $i; done
+  740  dir="."
+  741  echo $dir
+ 
+-----more history for sudo
+
+   
+  510  ls
+  511  for ((i=1; i<=100; i++)); do echo "this system sux $i" >> NewFiles_Season_1_Episode_$i.mkv"; done
+  512  for ((i=1; i<=100; i++)); do echo "this system sux $i" >> NewFiles_Season_1_Episode_$i.mkv; done
+  513  ls -v
+  514  ls
+  515  count=1
+  516  for i in $(ls -v); do echo $i ${count}_$i; ((count++)); done
+  517  for i in $(ls -v); do echo $i "${count} $i"; ((count++)); done
+  518  for i in $(ls -v); do mv $i "${count} $i"; ((count++)); done
+  519  ls
+  520  for i in $(ls -v); do echo $i ${i/Season/Series}; done
+  521  for i in $(ls -v); do echo -e $i \\t ${i/Season/Series}; done
+  522  for i in $(ls -v); do echo -e $i \\t \\t ${i/Season/Series}; done
+  523  for i in $(ls -v); do echo -e $i \\t \\r \\t ${i/Season/Series}; done
+  524  for i in $(ls -v); do echo $i ${i/Season/Series}; done
+  525  ls -v
+  526  for i in $(ls -v); do echo $i ${i:4}; done
+  527  for i in $(ls -v); do echo $i \\t ${i:4}; done
+  528  for i in $(ls -v); do echo $i \\t ${i:1}; done
+  529  for i in $(ls -v); do echo $i; done
+  530  for i in $(ls -v); do echo "$i"; done
+  531  for i in $(ls -v); do echo `$i`; done
+  532  for i in $(ls -v); do echo ${i}; done
+  533  for i in $(ls -v); do echo $i; done
+  534  ls -l
+  535  init 0
+  536  pwd
+  537  ls
+  538  cd Java
+  539  ls
+  540  cd shell
+  541  ls
+  542  for i in $(ls -v); do echo $i $(i/Episode/Show); done
+  543  for i in $(ls -v); do echo $i ; done
+  544  ls
+  545  ls -l
+  546  for i in *; do echo $i
+  547  for i in *; do echo $i; done
+  548  for i in *; do echo $i ${i..3}; done
+  549  for i in *; do echo $i "${i..3}"; done
+  550  test=123456
+  551  echo $(test..3}
+  552  for i in *; do echo $i "${i:3}"; done
+  553  for i in *; do mv $i "${i:3}"; done
+  554  for i in *; do echo $i "${i:3}"; done
+  555  for i in $(ls -v); do echo $i "${i:3}"; done
+  556  for i in *; do echo $i "${i:3}"; done
+  557  for i in *; do echo $i ${i:3}; done
+  558  for i in *; do mv $i ${i:3}; done
+  559  for i in *; do echo $i ${i:3}; done
+  560  for i in *; do echo $i $(i/mkv/MKV); done
+  561  for i in *; do echo $i ${i/mkv/MKV}; done
+  562  for i in *; do mv $i ${i/mkv/MKV}; done
+  563  for i in *; do echo "$i" "${i/mkv/MKV}"; done
+  564  for i in *; do mv "$i" "${i/mkv/MKV}"; done
+  565  ls
+  566  for i in *; do mv "$i" "${i/MKV/mkv}"; done
+  567  ls
+  568  for i in *; do mv "$i" "${i:3}"; done
+  569  ls
+  570  ls -v
+  571  history
+  572  echo 'pid: 1234'| sed -r 's/^.{5}//'
+  573  for i in *; do echo "$i" | sed -r 's/^.{5}//'; done
+  574  for i in $(ls -v); do echo "$i" | sed -r 's/^.{5}//'; done
+  575  history | more
+  576  for i in $(ls -v); do mv $i "${count} $i"; ((count++)); done
+  577  for i in $(ls -v); do echo $i "${count} $i"; ((count++)); done
+  578  init 0
+  579  cd Java/shell/shell/
+  580  for i in {1..6}; do echo "hello $i" >> NewFile_$i.txt; done 
+  581  ls
+  582  for i in {1..6}; do echo "hello $i" >> NewFile_$i.txt; done 
+  583  ls
+  584  ls -l
+  585  mr File_.txt 
+  586  ls -l
+  587  rm File_.txt
+  588  ls
+  589  ls -v
+  590  ls -l
+  591  ls
+  592  for i in {1..6}; do echo "hello $i" >> aNewFile_$i.txt; done 
+  593  ls
+  594  for i in {1..6}; do echo "hello $i" >> File_$i_name.txt; done 
+  595  ls
+  596  for i in * ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  597  for i in * ; do mv -e $i  $(echo $i |sed 's/^.\{5\}//g'); done
+  598  for i in * ; do mv $i $(echo $i |sed 's/^.\{5\}//g'); done
+  599  ls
+  600  rm -rf *
+  601  for i in {1..10}; do echo "hello $i" >> File_$i_name.txt; done 
+  602  for i in * ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  603  for i in {1..10}; do echo "hello $i" >> File_${i}_name.txt; done 
+  604  ls
+  605  ls -l
+  606  ls -v
+  607  ls -lv
+  608  rm File_.txt 
+  609  for i in $(ls -lv); do echo $i `echo $i | cut -c6-`; done
+  610  for i in $(ls -v); do echo $i `echo $i | cut -c6-`; done
+  611  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c6-`; done
+  612  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c5-`; done
+  613  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c6`; done
+  614  for i in $(ls -v); do echo -e $i \\t `echo $i | cut c6-`; done
+  615  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c6-`; done
+  616  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -6-`; done
+  617  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c6-`; done
+  618  history
+  619  for i in * ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  620  for i in * ; do echo -e $i \\t $(echo $i |sed 's/._/-'); done
+  621  for i in * ; do echo -e $i \\t $(echo $i |sed 's/._//'); done
+  622  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/._//'); done
+  623  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/_//'); done
+  624  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/_/-/'); done
+  625  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/_/ /'); done
+  626  ls
+  627  ls -l
+  628  for i in $(ls -v); do echo -e "$i" \\t "${i//_/ }"; done
+  629  for i in $(ls -v); do echo -e "$i" \\t "${i//_/-}"; done
+  630  for i in $(ls -v); do echo -e "$i" \\t "${i//e/i}"; done
+  631  for i in $(ls -v); do echo -e "$i" \\t "${i//_/ }"; done
+  632  init 0
+  633  ls
+  634  cd Java
+  635  cd shell
+  636  ls
+  637  mkdir shell
+  638  cd shell
+  639  for i in (1..6); do echo $i; done
+  640  for ((i=1; i<=6; i++)); do echo $i; done
+  641  for ((i=1; i<=6; i++)); do echo $ifilename; done
+  642  for ((i=1; i<=6; i++)); do echo $i > filename.txt; done
+  643  ls
+  644  cat filename.txt
+  645  for ((i=1; i<=6; i++)); do echo $i; done
+  646  for ((i=1; i<=6; i++)); do echo $i_; done
+  647  for ((i=1; i<=6; i++)); do echo $(i_filename); done
+  648  for ((i=1; i<=6; i++)); do echo ${i_filename}; done
+  649  rm filename.txt 
+  650  for i in {1..6}; do echo hello > "File_$i_name.txt; done
+  651  for i in {1..6}; do echo hello > "File_$i_name.txt"; done
+  652  ls
+  653  cat File_.txt 
+  654  for i in {1..6}; do echo hello > File_$i_name.txt; done
+  655  ls
+  656  history | more
+  657  for i in {1..6}; do echo "hello" > File_$i_name.txt; done
+  658  ls
+  659  for i in {1..6}; do echo "hello" >> File_$i_name.txt; done
+  660  ls
+  661  for i in {1..6}; do echo "hello" >> File_$i_name.txt; done
+  662  ls
+  663  for i in {1..6}; do echo "hello" >> File_$i_name.txt; done
+  664  ls
+  665  for i in {1..6}; do echo "hello" >>  "File_$i_name.txt"; done
+  666  ls
+  667  for i in {1..6}; do echo hello >>  "File_$i_name.txt"; done
+  668  ls
+  669  rm File_.txt 
+  670  ls
+  671  for i in {1..6}; do echo hello >>  "File_${i}_name.txt"; done
+  672  ls
+  673  cd Java/shell/shell
+  674  for i in * ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  675  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  676  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c6-`; done
+  677  for i in * ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  678  for i in * ; do echo -e $i \\t $(echo $i |sed 's/._/-'); done
+  679  for i in * ; do echo -e $i \\t $(echo $i |sed 's/._//'); done
+  680  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/._//'); done
+  681  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/_/-/'); done
+  682  for i in $(ls -v); do echo -e "$i" \\t "${i//_/ }"; done
+  683  cd Java/shell/shell
+  684  ls
+  685  history
+  686  init 0
+  687  cd Java/shell/shell
+  688  for planet in "Mer 36" "Ven 67"; do echo $planet; done
+  689  for planet in "Mer 36" "Ven 67"; do set -- $planet; done
+  690  for planet in "Mer 36" "Ven 67"; do set -- $planet echo "$1 $200,000 miles from the sun" ; done
+  691  for planet in "Mer 36" "Ven 67"; do set -- $planet; echo "$1 $200,000 miles from the sun" ; done; done
+  692  for planet in "Mer 36" "Ven 67"; do set -- $planet; echo "$1 $200,000 miles from the sun" ; done
+  693  for planet in "Mer 36" "Ven 67" "Ear 93" "Mars 142"; do set -- $planet; echo "$1 $2,000,000 miles from the sun" ; done
+  694  for planet in "Mer 36" "Ven 67" "Ear 93" "Mars 142"; do set -- $planet; echo "$1 is $2,000,000 miles from the sun" ; done
+  695  for planet in "Mercury 36" "Venus 67" "Earth 93" "Mars 142"; do set -- $planet; echo "$1 is $2,000,000 miles from the sun" ; done
+  696  echo $planets
+  697  echo $planet
+  698  FILES=~/
+  699  echo $FILES
+  700  ls $FILES
+  701  for file in $FILES; do echo $FILES; done
+  702  $DIR=~/, ~/fakedir
+  703  $DIR=~/ ~/fakedir
+  704  $DIR="~/, ~/fakedir"
+  705  pwd
+  706  for i in *; do echo $i; done
+  707  for i in $(ls -v); do echo $i; done
+  708  for i in $(ls -v); do echo $i; if [ ! -e "$i" ] the echo "$i" does not exist."; done
+  709  for i in $(ls -v); do echo $i; if [ ! -e "$i" ] the echo "$i does not exist."; done
+  710  filename="*mkv"
+  711  for i in $filename; do echo "contents of $i" echo "---" cat "$i"; done
+  712  ls
+  713  filename="*txt"
+  714  echo $filename
+  715  for i in $filename; do echo "contents of $i" echo "---" cat "$i"; done
+  716  ls -l
+  717  cat File_1_name.txt 
+  718  for i in $filename; do echo "contents of $i" echo "---" cat "$i"; done
+  719  for i in $filename; do echo "contents of $i" echo "---"; cat "$i"; done
+  720  for i in $filename; do echo "contents of $i"; echo "---"; cat "$i"; done
+  721  for i in $filename; do echo "contents of $i"; echo "---"; cat "$i"; echo; done
+  722  for i in $filename; do echo "Contents of $i"; echo "---"; cat "$i"; echo; done
+  723  for i in *; do ls -lv "$file"; done
+  724  echo $file
+  725  for i in *; do ls -lv "$file"; done
+  726  for i in *; do ls -lv "$file"; for file in [EI]*; do echo $file; done
+  727  for i in *; do ls -lv "$file"; for j in [EI]*; do echo $j; done
+  728  for i in *; do ls -lv "$file"; for j in *; do echo $j; done
+  729  for i in *; do ls -lv "$file"; for file in *; do echo $file; done
+  730  for i in *; do ls -lv "$file"; for file in *; do echo $file; done ; done
+  731  for i in *; do ls -lv "$file"; for file in [EI]*; do echo $file; done ; done
+  732  for i in *; do ls -lv "$file"; for file in *; do echo $file; done ; done
+  733  ls
+  734  cat foo >> poo.txt
+  735  echo foo >> cat poo.txt
+
+  802  ls -l
+  803  ls | wc -l
+  804  count=1
+  805  echo $count
+  806  for i in $(ls -v); do echo $i "${count} $i"; ((count++)); done
+  807  cd /home/notroot/Java/shell
+  808  ls
+  809  for i in $(ls -v); do echo $1; done
+  810  ls
+  811  for i in $(ls -v); do echo $i; done
+  812  mkdir newdir
+  813  ls -l
+  814  chown notroot:notroot *.*
+  815  ls -l
+  816  chown notroot:notroot shell/
+  817  chown notroot:notroot newdir/
+  818  cd newdir
+  819  ls
+  820  ls -l
+  821  ls -v
+  822  ls -lv
+  823  for i in $(ls -v); do echo $i; done
+  824  for i in $(ls -v); do echo -e $i; done
+  825  for i in $(ls -v); do echo $i; done
+  826  for i in $(ls -v); do echo $i $i; done
+  827  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/^.\{5\}//g'); done
+  828  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/^.\{1\}//g'); done
+  829  for i in $(ls -v); do echo -e $i \\t `echo $i | cut -c6-`; done
+  830  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/._//'); done
+  831  filename="*txt"
+  832  for i in $filename; do echo "Contents of $i"; echo "---"; cat "$i"; echo; done
+  833  filename="*mkv"
+  834  echo $filename
+  835  for i in $filename; do echo "Contents of $i"; echo "---"; cat "$i"; echo; done
+  836  ls
+  837  ls -l
+  838  ls -lv
+  839  for i in $(ls -v); do echo $i; done
+  840  for i in $(ls -v); do echo -e $i \\t ${i/Season/Series}; done
+  841  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/"NewFiles_Series_1_Episode_"/"DSC00"/'); done
+  842  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/-/_/'); done
+  843  for i in $(ls -v); do echo -e "$i" \\t "${i//_/ }"; done
+  844  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/_/-/'); done
+  845  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/NewFile/DSC/'); done
+  846  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/NewFiles_Season_1_Episode_/DSC/'); done
+  847  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/NewFiles_Season_1_Episode_/DSC00/'); done
+  848  for i in $(ls -v) ; do echo -e $i \\t $(echo $i |sed 's/NewFiles_Season_1_Episode_/DSC_00/'); done
+  849  for i in $(ls -v) ; do mv -e $i \\t $(echo $i |sed 's/NewFiles_Season_1_Episode_/DSC_00/'); done
+  850  for i in $(ls -v) ; do cp -e $i \\t $(echo $i |sed 's/NewFiles_Season_1_Episode_/DSC_00/'); done
+  851  for i in $(ls -v) ; do mv $i \\t $(echo $i |sed 's/NewFiles_Season_1_Episode_/DSC_00/'); done
+  852  ls
+  853  for i in $(ls -v) ; do mv $i $(echo $i |sed 's/NewFiles_Season_1_Episode_/DSC_00/'); done
+  854  for i in $(ls -v); mv $i $i.jpg; done
+  855  for i in $(ls -v); do mv $i $i.jpg; done
+  856  for i in $(ls -v); do mv $i $i; done
+  857  for i in $(ls -v); do cp $i $i; done
+  858  for i in *; do cp $i $i; done
+  859  for i in *; do cp $i $i.jpg; done
+  860  for i in *.mkv; do mv -v -- "$i" "${i%.mkv}.jpg; done
+  861  for i in *.mkv; do mv -v -- "$i" "${i%.mkv}.jpg"; done
+  862  ls
+  863  for i in $(ls -v) ; do mv -v -- "$i" \\t "$(echo $i |sed 's/_/-/')"; done
+  864  num=1; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+  865  ls
+  866  num=1; for i in *; do mv "$i" "$(printf '%04d' $num).${DSC0i#*.}"; ((num++)); done
+  867  ls
+  868  num=1; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+  869  ls 
+  870  rm *.*
+  871  ls
+  872  ls -l
+  873  num=1; for i in $(ls -v); do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+  874  num=1; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+  875  num=1; for i in "$(ls -v)"; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+  876  ls
+  877  rm *
+  878  ls
+  879  num=1; for i in *; do echo "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+  880  num=1; for i in *; do echo "$i" "$i(printf '%04d' $num).${i#*.}"; ((num++)); done
+  881  num=1; for i in *; do echo "$i" "$(printf '%14d' $num).${i#*.}"; ((num++)); done
+  882  num=1; for i in *; do echo "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+  883  num=1; for i in *; do echo "$i" "$(printf '%05d' $num).${i#*.}"; ((num++)); done
+  884  num=1; for i in *; do echo "$i" "$(printf 'DSC%05d' $num).${i#*.}"; ((num++)); done
+  885  num=1; for i in *; do echo "$i" "$(printf 'DSC%05d' $num).${i#*.}"; ((num++)); donenum=1; for i in `$(ls -v)`; do echo "$i" "$(printf 'DSC%05d' $num).${i#*.}"; ((num++)); done
+  886  num=1; for i in "$(ls -v)"; do echo "$i" "$(printf 'DSC%05d' $num).${i#*.}"; ((num++)); done
+  887  ls
+  888  ls -l
+  889  num=1; for i in "$(ls -v)"; do echo "$i" "$(printf 'DSC%05d' $num).${i#*.}"; ((num++)); done
+  890  num=1; for i in $(ls -v); do echo "$i" "$(printf 'DSC%05d' $num).${i#*.}"; ((num++)); done
+  891  num=1; for i in $(ls -v); do mv "$i" "$(printf 'DSC%05d' $num).${i#*.}"; ((num++)); done
+  892  for i in $(ls -v); do mv $i "${count} $i"; ((count++)); done
+  893  for i in $(ls -v); do echo $i "${count} $i"; ((count++)); done
+  894  num=1; for i in $(ls -v); do echo "$i" "$(printf 'DSC%05d' $num).${i#*.}"; ((num++)); done
+  895  num=1; for i in {$(ls -v)}; do echo "$i" "$(printf 'DSC%05d' $num).${i#*.}"; ((num++)); done
+  896  num=1; for i in {$(ls -v)}; do mv "$i" "$(printf 'DSC%05d' $num).${i#*.}"; ((num++)); done
+  897  num=1; for i in *; do echo "$i" "$(printf 'DSC%05d' $num).${i#*.}"; ((num++)); done
+  898  for f in *' '*; do mv "$f" "`echo $f | sed -e 's/ /_/g'`"; done
+  899  ls
+  900  for x in *; do mv $x $(echo ${x%*.*}); done
+  901  ls
+  902  for i in * ; do mv $i $customname; done
+  903  ls
+  904  init 6
+  905  init 0
+  906  history >> sudo.history.txt
+
+
+=============REFERENCE AND READING MATERIAL===================================
+
+http://tldp.org/LDP/abs/html/
+
