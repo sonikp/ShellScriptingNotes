@@ -9,9 +9,56 @@ now=$(date +"%Y%m%d"); for i in {1..6}; do echo "hello x $i" >> NewFiles_${now}_
 
 date=$(stat -c %x NewFiles_20160917_Season_1_Episode_1.mkv.mkv | cut -c1-10); for i in *; do mv $i "$i${date}".mkv; done
 
+-----><------> START: More new, work in progress not fully tested -----><------>
+
+================NEW ands USEFUL======================
+
+Create files with specific names:
+$ for ((i=001; i<=100; i++)); do echo "this system sux $i" >> "DSC0000$i.jpg"; done
+
+Create dummy files with specific names following the camera:
+$ for i in {00001..00666}; do echo "hello x $i" >> "DSC${i}.jpg"; done
+
+Create dummy files with specific names, for specific numbering on camera:
+$ for ((i=1058; i<=1158; i++)); do echo "hello x $i" >> "DSC0$i.txt"; done
+$ for i in {00001..00666}; do echo "hello x $i" >> "DSC${i}.jpg"; done
+$ for i in {01059..01724}; do echo "hello x $i" >> "DSC${i}.jpg"; done
+
+Rename all files in a folder from a specific file sequence number for camera:
+$ num=1059; for i in *; do mv "$i" "DSC0$num.JPG"; ((num++)); done
+
+===================TESTING==============================
+
+
+=> create:
+$ for i in {00001..00666}; do echo "hello x $i" >> "DSC${i}.JPG"; done
+
+=> rename all files in a folder from a specific file sequence number:
+$ num=1059; for i in *; do mv "$i" "DSC0$num.JPG"; ((num++)); done
+
+
+================NEW ands USEFUL======================
+
+Changing previous filename with sequential numbers:
+$ num=1058; for i in *; do mv "$i" "$(printf '%04d' $num).${i#*.}"; ((num++)); done
+$ num=1; for i in *; do mv "$i" "$(printf '%04d' $num).${i}"; ((num++)); done
+
+
+$ for i in *; do ls; done
+
+
+01058
+
+
+Changing filenames for renaming photo's:
+$ num=1; for i in *; do mv "$i" "$(printf '%04d' $num).DSC.${i#*.}"; ((num++)); done
+$ now=$(date +"%m_%d_%Y"); num=1; for i in *; do mv "$i" "$(printf '%04d' $num)-DSC-${now}-Germany.${i#*.}"; ((num++)); done
+
+$ num=1; for i in *; do mv "$i" "$(printf '%04d' $num).DSC.${i#*.}"; ((num++)); done
 
 
 
+-----><------> END: More new, work in progress not fully tested -----><------>
 
 
 
