@@ -13,6 +13,8 @@ $ for ((i=1; i<=100; i++)); do echo "this system sux $i" >> "NewFiles_Season_1_E
 $ for i in {1..6}; do echo "hello x $i" >> NewFiles_Season_1_Episode_${i}.mkv; done
 Include leading '0' for single numbers:
 $ for i in 0{1..9} {10..15}; do echo "this system sux $i" >> "A Pretty Good Program s01 e$i British TV Show.mkv"; done
+Create 20 picture files where count starts from 300
+num=300;  for ((i=1; i<=20; i++)); do echo "test photo file $i" >> "DSC$(printf '%04d' $num).jpg"; ((num++)); done
 
 Create dummy files in a directory with a date stamp:
 $ now=$(date +"%m_%d_%Y"); for i in {1..6}; do echo "hello x $i" >> NewFiles_${now}_Season_1_Episode_${i}.mkv; done
