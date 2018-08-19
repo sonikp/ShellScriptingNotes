@@ -101,6 +101,51 @@ $ for planet in "Mercury 36" "Venus 67" "Earth 93" "Mars 142"; do set -- $planet
 Nested for loops:
 $ for i in {0..3}; do for j in {0..9}; do echo -n \($i, $j\); echo Is today the $i$j \?; done; done
 
+
+-------GOOD----------------------------------
+
+Create files with sequential numbers with leading 0's; 01-09
+$ for i in 0{1..9} {10..15}; do echo "this system sux $i" >> "A Pretty Good Program s01 e$i British TV Show.mkv"; done
+
+Add "prefix_" to the beginnng of a filename:
+$ for i in *.mkv; do mv "$i" "prefix_$i"; done
+
+Add "_suffix" to the end of a filename:
+$ for i in *.mkv; do mv "${i}" "${i%.mkv}_suffix.mkv"; done
+
+Rename end of a filename:
+$ for i in *.mkv; do mv "$i" "${i/Show.mkv/NewShow.mkv}"; done
+
+Find/Replace a string within a filename:
+$ for i in *.mkv; do mv -i "${i}" "${i/British/English}"; done
+$ for i in *.mkv; do mv "${i}" "${i/English/British}"; done
+
+Remove the 10th character from "A Pretty Good Program s01 e01 British TV Show.mkv" to "A Pretty Good Program s01e01 British TV Show.mkv":
+$ position=26; for i in *.mkv; do mv -- "$i" "${i:0:$position-1}${i:$position}"; done
+
+Remove a set of characters within a filename from "A Pretty Good Program s01e15 British TV Show.mkv" to "A Prettod Program s01e15 British TV Show.mkv":
+$ for i in *.mkv; do mv -- "$i" "${i::7}${i:11}"; done   => {i::7} = set first 7 characters, {i:11} = keep everything AFTER the 11th character
+
+Remove unwanted string at the end of a filename, from "A Pretty Good Program s01 e01 British TV Show.mkv" to "A Pretty Good Program s01e01 British.mkv"
+$ for i in *.mkv; do mv "${i}" "${i/ TV Show/}"; done
+
+
+
+Other:
+Run multiple commands on a single line, loop through 3 times:
+$ for i in {1..3}; do echo $i; ls -l ; date; whoami; pwd; chown *.*; done
+
+If statement for checking whether 20th character is 'E':
+$ for i in *.avi; do echo _; if [[ ${i:21:1} == E ]]; then echo YES; fi; done
+
+
+--------Experiments-----------------------------------
+
+
+
+
+
+
 ----------------NOT COMPLETE--------------------------------
 ***This aims to read the file attributes of a file and appends the file creation date to the end
 of the file. Currently reads the attribute for the first file, assigns the date to the $date variable
