@@ -11,6 +11,8 @@
 Create dummy files in a directory:
 $ for ((i=1; i<=100; i++)); do echo "this system sux $i" >> "NewFiles_Season_1_Episode_$i.mkv"; done
 $ for i in {1..6}; do echo "hello x $i" >> NewFiles_Season_1_Episode_${i}.mkv; done
+Include leading '0' for single numbers:
+$ for i in 0{1..9} {10..15}; do echo "this system sux $i" >> "A Pretty Good Program s01 e$i British TV Show.mkv"; done
 
 Create dummy files in a directory with a date stamp:
 $ now=$(date +"%m_%d_%Y"); for i in {1..6}; do echo "hello x $i" >> NewFiles_${now}_Season_1_Episode_${i}.mkv; done
