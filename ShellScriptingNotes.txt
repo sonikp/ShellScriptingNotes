@@ -106,6 +106,15 @@ Nested for loops:
 $ for i in {0..3}; do for j in {0..9}; do echo -n \($i, $j\); echo Is today the $i$j \?; done; done
 
 
+Changing Case:
+First, rename all files to lower-case:
+$ rename 'y/A-Z/a-z/' *
+
+Second, make the first letter of each word Upper Case:
+$ rename 's/(^|[\s_-])([a-z])/$1\u$2/g' *
+
+
+
 -------GOOD----------------------------------
 
 Create files with sequential numbers with leading 0's; 01-09
