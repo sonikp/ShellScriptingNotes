@@ -154,6 +154,9 @@ $ for i in *.avi; do echo _; if [[ ${i:21:1} == E ]]; then echo YES; fi; done
 If filename in dir contains the string "_suffix" then remove that string:
 string=_suffix; for i in *.mkv; do if [[ ${i} = *$string* ]]; then mv "$i" "${i/_suffix/}"; fi; done
 
+How many filenames in dir contains the string "-" and show file:
+$ string=-; for i in *; do if [[ ${i} = *$string* ]]; then echo ${i}; fi; done
+
 --------Experiments-----------------------------------
 
 
