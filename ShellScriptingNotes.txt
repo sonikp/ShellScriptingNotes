@@ -159,6 +159,9 @@ $ string=-; for i in *; do if [[ ${i} = *$string* ]]; then echo ${i}; fi; done
 
 --------Experiments-----------------------------------
 
+NEED TO FIGURE OUT:
+Replace all the . in a filename execpt the extension: 
+e.g. Show.it.real.steel.cars.series.3.01of13.atm.y.tow.720p.hdtv.mp4
 
 
 
