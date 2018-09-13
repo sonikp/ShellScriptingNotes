@@ -157,6 +157,43 @@ string=_suffix; for i in *.mkv; do if [[ ${i} = *$string* ]]; then mv "$i" "${i/
 How many filenames in dir contains the string "-" and show file:
 $ string=-; for i in *; do if [[ ${i} = *$string* ]]; then echo ${i}; fi; done
 
+--------Audio Conversion-----------------------------------
+
+Convert all Flac in a directory to Mp3 using maximum quality variable bitrate:
+$ for file in *.flac; do flac -cd "$file" | lame -q 0 --vbr-new -V 0 - "${file%.flac}.mp3"; done
+
+Convert all .flac from a folder subtree in 192Kb mp3:
+$ find . -type f -iname '*.flac' | while read FILE; do FILENAME="${FILE%.*}"; flac -cd "$FILE" | lame -b 192 - "${FILENAME}.mp3"; done
+
+Convert all flac files in a folder to mp3 files with a bitrate of 192 kbps:
+$ for f in *; do flac -cd $f | lame -b 192 - $f.mp3; done
+
+Convert wma to mp3@128k:
+$ for f in *.wma; do ffmpeg -i "$f" -ab 128k "${f%.wma}.mp3" -ab 128K; done
+
+Convert .wma files to .ogg with ffmpeg:
+$ find -name '*wma' -exec ffmpeg -i {} -acodec vorbis -ab 128k {}.ogg \;
+
+Convert .wma files to .mp3@192 with ffmpeg:
+$ for f in *.wma; do ffmpeg -i "$f" -ab 192k "${f%.wma}.mp3" -ab 192K; done
+
+Convert .wma files to .mp3@192 with lame:
+$ for f in *; do wma -cd $f | lame -b 192 - $f.mp3; done
+
+Create a variable bitrate(VBR) mp3 output:
+$ mkdir newfile
+$ for i in *.m4a; do ffmpeg -i "$i" -codec:v copy -codec:a libmp3lame -q:a 2 newfile/"${f%.m4a}.mp3"; done 
+
+Additional:
+ffmpeg installation with Ubuntu Multimedia for Trusty
+https://launchpad.net/~mc3man/+archive/ubuntu/trusty-media
+
+--------------------------------------------------------
+
+
+
+
+
 --------Experiments-----------------------------------
 
 NEED TO FIGURE OUT:
